@@ -1,0 +1,33 @@
+{
+    "manifest_version": 3,
+    "name": "Lichess Importer",
+    "version": "1.0",
+    "description": "Import games from chess.com",
+    "author": "LeSpec",
+    "homepage_url": "https://github.com/LeSpec/Lichess-Importer",
+    "permissions": ["scripting"],
+    "host_permissions": ["https://lichess.org/*"],
+    "icons": {
+        "16": "icons/icon-16.png",
+        "32": "icons/icon-32.png",
+        "48": "icons/icon-48.png",
+        "96": "icons/icon-96.png",
+        "128": "icons/icon-128.png"
+    },
+    "background": {
+        "scripts": ["background/background.js"],
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://www.chess.com/*"],
+            "js": ["content_scripts/anchorClickListener.js"],
+            "run_at": "document_end"
+        },
+        {
+            "matches": ["https://www.chess.com/game/*", "https://www.chess.com/analysis/game/*"],
+            "js": ["content_scripts/pageClickListener.js"],
+            "run_at": "document_end"
+        }
+    ]
+}
