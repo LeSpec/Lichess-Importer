@@ -1,4 +1,4 @@
-import { handleError } from "../../lib/utility.js";
+import { handleError, measureTime } from "../../lib/utility.js";
 
 async function getUserName(playersData, userUuid) {
     if (userUuid === playersData.top.uuid) {
@@ -29,7 +29,7 @@ async function decideViewedPlayer(playersData, senderUrl, uuidPromise) {
     let viewedPlayer;
 
     if (isUserUrl) {
-        const userUuid = await uuidPromise;
+        const userUuid = await measureTime("User uuid download", () => uuidPromise);
         viewedPlayer = getUserName(playersData, userUuid);
     } else if (isMemberUrl) {
         viewedPlayer = senderUrl.slice(memberUrl.length).split("?")[0];
