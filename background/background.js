@@ -41,7 +41,7 @@ async function openOnLichess(chesscomGameUrl, senderTab) {
 
     const pgn = gameDataToPgn(gameData);
 
-    let importUrl = await measureTime("Upload on lichess", async () => importGame(pgn));
+    let importUrl = await measureTime("Lichess upload", async () => importGame(pgn));
     if (!importUrl) return;
 
     const flipBoard = await shouldFlipBoard(playersData, senderTab.url, uuidPromise);
