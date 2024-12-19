@@ -29,5 +29,11 @@
             "js": ["content_scripts/pageClickListener.js"],
             "run_at": "document_end"
         }
-    ]
+    ],
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "{23b7cff7-adc1-400d-a216-4b84e2257545}",
+            "strict_min_version": "109.0"
+        }
+    }
 }
