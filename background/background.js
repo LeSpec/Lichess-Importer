@@ -19,6 +19,7 @@ browser.runtime.onMessage.addListener((message, sender) => {
         } else if (message.type === "ERROR") {
             handleError(message.context, message.error);
         } else if (!message.type) {
+            // for debugging
             console.log(message);
         }
     } catch (e) {
@@ -47,7 +48,7 @@ async function openOnLichess(chesscomGameUrl, senderTab) {
     const flipBoard = await shouldFlipBoard(playersData, senderTab.url, uuidPromise);
     const orientationSuffix = flipBoard ? "/black" : "/white";
 
-    const options = { newTab, activeTab, tabIndex: senderTab.index + 1 };
+    const options = { newTab, activeTab, senderTab };
     const gameTab = await loadGame(importUrl + orientationSuffix, options);
 
     if (analyze) clickAnalysis(gameTab.id);
@@ -55,12 +56,12 @@ async function openOnLichess(chesscomGameUrl, senderTab) {
     clickCeval(gameTab.id);
 }
 
-async function loadGame(importUrl, { newTab, activeTab, tabIndex }) {
+async function loadGame(importUrl, { newTab, activeTab, senderTab }) {
     return newTab
         ? browser.tabs.create({
               url: importUrl,
               active: activeTab,
-              index: tabIndex,
+              index: senderTab.index + 1,
           })
-        : browser.tabs.update({ url: importUrl });
+        : browser.tabs.update(senderTab.id, { url: importUrl });
 }
