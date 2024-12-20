@@ -8,6 +8,17 @@ import clickCeval from "./lichess/clickCeval.js";
 import importGame from "./lichess/importGame.js";
 import { measureTime } from "../lib/utility.js";
 
+browser.runtime.onInstalled.addListener(() => {
+    const requiredPermissions = {
+        origins: ["https://lichess.org/*", "https://www.chess.com/*"],
+    };
+    browser.permissions.contains(requiredPermissions).then((hasPermissions) => {
+        if (!hasPermissions) {
+            handleError("Missing host permissions");
+        }
+    });
+});
+
 browser.runtime.onMessage.addListener((message, sender) => {
     try {
         if (message.type === "GAME_LINK_CLICKED" || message.type === "GAME_PAGE_CLICKED") {
