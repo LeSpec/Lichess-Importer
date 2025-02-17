@@ -1,16 +1,23 @@
 import { handleError } from "../../lib/utility.js";
 
 function transformToCallbackUrl(chesscomUrl) {
-    return chesscomUrl
-        .trim()
-        .replace(
-            /^https:\/\/www\.chess\.com\/(analysis\/)?game\/(live|daily)\/(\d+)(\?.*)?$/,
-            "https://www.chess.com/callback/$2/game/$3"
-        );
+    const trimmedUrl = chesscomUrl.trim();
+    const regex = /^https:\/\/www\.chess\.com\/(analysis\/)?game\/((live|daily)\/)?(\d+)(\?.*)?$/;
+
+    const match = trimmedUrl.match(regex);
+    if (!match) {
+        handleError(`Could not transform ${chesscomUrl} to callback url`);
+        return null;
+    }
+
+    const [, analysis, , type, gameId] = match;
+    return `https://www.chess.com/callback/${type || "live"}/game/${gameId}`;
 }
 
 export default async function getGameData(chesscomUrl) {
     const callbackUrl = transformToCallbackUrl(chesscomUrl);
+    if (!callbackUrl) return null;
+
     try {
         const response = await fetch(callbackUrl);
         if (!response.ok) throw "status " + response.status;
