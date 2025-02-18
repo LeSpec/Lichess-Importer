@@ -28,9 +28,9 @@ if (columnOne) {
 } else {
     documentUrl = document.location.href;
     if (
-        // there is no game table on those pages
-        !documentUrl.startsWith("https://www.chess.com/game/") &&
-        !documentUrl.startsWith("https://www.chess.com/analysis/game/")
+        // there should be a game table on those pages
+        documentUrl.startsWith("https://www.chess.com/games/archive/") ||
+        documentUrl.startsWith("https://www.chess.com/member/")
     ) {
         browser.runtime.sendMessage({
             type: "ERROR",

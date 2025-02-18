@@ -8,15 +8,17 @@ import clickCeval from "./lichess/clickCeval.js";
 import importGame from "./lichess/importGame.js";
 import { measureTime } from "../lib/utility.js";
 
-browser.runtime.onInstalled.addListener(() => {
-    const requiredPermissions = {
-        origins: ["https://lichess.org/*", "https://www.chess.com/*"],
-    };
-    browser.permissions.contains(requiredPermissions).then((hasPermissions) => {
-        if (!hasPermissions) {
-            handleError("Missing host permissions");
-        }
-    });
+// Check host permissions
+const manifest = browser.runtime.getManifest();
+const hostPermissions = manifest.host_permissions;
+const allMatches = manifest.content_scripts.flatMap((script) => script.matches);
+const requiredPermissions = {
+    origins: [...hostPermissions, ...allMatches],
+};
+browser.permissions.contains(requiredPermissions).then((hasPermissions) => {
+    if (!hasPermissions) {
+        handleError("Missing host permissions");
+    }
 });
 
 browser.runtime.onMessage.addListener((message, sender) => {
