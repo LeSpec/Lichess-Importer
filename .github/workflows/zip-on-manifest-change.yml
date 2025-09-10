@@ -32,3 +32,16 @@ jobs:
         with:
           name: empty-file
           path: empty.txt
+          
+      - name: Prepare temporary folder
+        run: |
+          mkdir temp_folder
+          # Create two empty text files inside the folder
+          touch temp_folder/file1.txt
+          touch temp_folder/file2.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: empty-files-folder
+          path: temp_folder
