@@ -15,11 +15,10 @@ jobs:
 
       - name: Create zip archive
         run: |
-          cd $GITHUB_WORKSPACE
-          zip -r "lichess-importer.zip" . -x ".git/*" ".github/*" ".gitignore" "README.md" "*.DS_Store"
+          zip -r "lichess-importer.zip" ./* -x "README.md"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lichess-importer-build
+          name: lichess-importer
           path: lichess-importer.zip
