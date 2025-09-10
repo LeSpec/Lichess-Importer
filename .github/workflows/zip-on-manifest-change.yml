@@ -17,7 +17,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           # Use a subshell to avoid including the repo root
-          (cd . && zip -r "../Lichess Importer.zip" * -x ".git/*" ".github/*" "*.DS_Store" "README.md")
+          (cd . && zip -r "../lichess-importer.zip" * -x ".git/*" ".github/*" "*.DS_Store" "README.md")
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
