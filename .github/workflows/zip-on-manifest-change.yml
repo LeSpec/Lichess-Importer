@@ -15,33 +15,11 @@ jobs:
 
       - name: Create zip archive
         run: |
-          cd $GITHUB_WORKSPACE
-          zip -r "extension.zip" * -x ".git/*" ".github/*" "*.DS_Store" "README.md"
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: extension
-          path: /extension.zip
-          
-      - name: Create empty text file
-        run: |
-          echo -n "" > empty.txt
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: empty-file
-          path: empty.txt
-          
-      - name: Prepare temporary folder
-        run: |
           mkdir temp_folder
-          # Create two empty text files inside the folder
-          touch temp_folder/file1.txt
-          touch temp_folder/file2.txt
-
+          rsync -av --exclude={".*","README.md"} ./ temp_folder/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: empty-files-folder
-          path: temp_folder
+           name: add-on zip
+           path: temp_folder
+
