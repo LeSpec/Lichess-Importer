@@ -22,3 +22,13 @@ jobs:
         with:
           name: extension
           path: /extension.zip
+          
+      - name: Create empty text file
+        run: |
+          echo -n "" > empty.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: empty-file
+          path: empty.txt
