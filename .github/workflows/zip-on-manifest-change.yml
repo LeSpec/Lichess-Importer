@@ -15,8 +15,10 @@ jobs:
 
       - name: Create zip archive
         run: |
-          cd $GITHUB_WORKSPACE
-          zip -r "lichess-importer.zip" manifest.json background.js icons/
+          mkdir temp_zip
+          cp manifest.json background.js content.js -r icons/ temp_zip/
+          cd temp_zip
+          zip -r ../lichess-importer.zip *
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
