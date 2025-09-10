@@ -18,7 +18,7 @@ jobs:
           mkdir temp_zip
           cp manifest.json temp_zip/
           cd temp_zip
-          zip -r ../lichess-importer.zip *
+          zip -r -j ../lichess-importer.zip *
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
