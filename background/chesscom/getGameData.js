@@ -2,7 +2,7 @@ import { handleError } from "../../lib/utility.js";
 
 function transformToCallbackUrl(chesscomUrl) {
     const trimmedUrl = chesscomUrl.trim();
-    const regex = /^https:\/\/www\.chess\.com\/(analysis\/)?game\/((live|daily)\/)?(\d+)(\?.*)?$/;
+    const regex = /^https:\/\/www\.chess\.com\/(analysis\/)?game\/((live|daily)\/)?(\d+)(.*)?$/;
 
     const match = trimmedUrl.match(regex);
     if (!match) {

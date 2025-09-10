@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Lichess Importer",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "description": "Import games from chess.com",
     "author": "LeSpec",
     "homepage_url": "https://github.com/LeSpec/Lichess-Importer",
@@ -28,7 +28,10 @@
     "browser_specific_settings": {
         "gecko": {
             "id": "{23b7cff7-adc1-400d-a216-4b84e2257545}",
-            "strict_min_version": "112.0"
+            "strict_min_version": "112.0",
+            "data_collection_permissions": {
+                "required": ["none"]
+            }
         }
     }
 }
