@@ -16,7 +16,7 @@ jobs:
       - name: Create zip archive
         run: |
           mkdir temp_zip
-          cp manifest.json background.js content.js -r icons/ temp_zip/
+          cp manifest.json temp_zip/
           cd temp_zip
           zip -r ../lichess-importer.zip *
       - name: Upload artifact
