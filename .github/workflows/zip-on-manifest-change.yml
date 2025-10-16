@@ -4,20 +4,22 @@ on:
   push:
     paths:
       - "manifest.json"
+  workflow_dispatch:
 
 jobs:
   zip:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Create zip archive
         run: |
-          zip -r "Lichess-Importer.zip" . -x ".git/*" ".github/*" ".gitignore" "README.md" "*.DS_Store"
-
+          mkdir temp_folder
+          rsync -a --exclude="README.md" ./* temp_folder/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: extension-build
-          path: extension.zip
+           name: lichess-importer
+           path: temp_folder
+
