@@ -1,4 +1,4 @@
-import { createTimer, handleError } from "../lib/utility.js";
+import { measureTime, handleError } from "../lib/utility.js";
 import gameDataToPgn from "./chesscom/gameDataToPgn.js";
 import getGameData from "./chesscom/getGameData.js";
 import getUserUuid from "./chesscom/getUserUuid.js";
@@ -6,7 +6,6 @@ import shouldFlipBoard from "./chesscom/shouldFlipBoard.js";
 import clickAnalysis from "./lichess/clickAnalysis.js";
 import clickCeval from "./lichess/clickCeval.js";
 import importGame from "./lichess/importGame.js";
-import { measureTime } from "../lib/utility.js";
 
 // Check host permissions
 const manifest = browser.runtime.getManifest();
@@ -36,7 +35,7 @@ browser.runtime.onMessage.addListener((message, sender) => {
             console.log(message);
         }
     } catch (e) {
-        handleError("background message listener failed", e);
+        handleError("Background message listener failed", e);
     }
 });
 
@@ -45,7 +44,7 @@ async function openOnLichess(chesscomGameUrl, senderTab) {
     const newTab = true;
     const activeTab = true;
 
-    const uuidPromise = getUserUuid(senderTab); // start fetching uuid before actually needed to improve performance
+    const uuidPromise = measureTime("User uuid download", () => getUserUuid(senderTab)); // start fetching uuid before actually needed to improve performance
 
     const data = await measureTime("Chess.com download", async () => getGameData(chesscomGameUrl));
     if (!data) return;

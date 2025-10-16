@@ -1,4 +1,4 @@
-import { handleError, measureTime } from "../../lib/utility.js";
+import { handleError } from "../../lib/utility.js";
 
 async function getUserName(playersData, userUuid) {
     if (userUuid === playersData.top.uuid) {
@@ -29,12 +29,21 @@ async function decideViewedPlayer(playersData, senderUrl, uuidPromise) {
     let viewedPlayer;
 
     if (isUserUrl) {
-        const userUuid = await measureTime("User uuid download", () => uuidPromise);
+        const sentinel = Symbol("pending");
+        const result = await Promise.race([uuidPromise, sentinel]); // chess.com's servers sometimes respond slow, we don't wait
+        let userUuid;
+        if (result === sentinel) {
+            userUuid = null;
+            handleError("Fetching user uuid took too long");
+        } else {
+            userUuid = result;
+        }
+
         viewedPlayer = getUserName(playersData, userUuid);
     } else if (isMemberUrl) {
-        viewedPlayer = senderUrl.slice(memberUrl.length).split("?")[0];
+        viewedPlayer = senderUrl.slice(memberUrl.length).split(/[\/?#]/)[0];
     } else if (isArchiveUrl) {
-        viewedPlayer = senderUrl.slice(archiveUrl.length).split("?")[0];
+        viewedPlayer = senderUrl.slice(archiveUrl.length).split(/[\/?#]/)[0];
     } else {
         viewedPlayer = null;
     }
