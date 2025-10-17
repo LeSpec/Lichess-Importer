@@ -1,4 +1,4 @@
-import { measureTime, handleError } from "../lib/utility.js";
+import { measureTime, handleError, logMessage } from "../lib/utility.js";
 import gameDataToPgn from "./chesscom/gameDataToPgn.js";
 import getGameData from "./chesscom/getGameData.js";
 import getUserUuid from "./chesscom/getUserUuid.js";
@@ -20,14 +20,24 @@ browser.permissions.contains(requiredPermissions).then((hasPermissions) => {
     }
 });
 
+// cache uuid, since chess.com's servers sometimes respond slowly
+let uuidCache = null;
+function fetchAndStoreUuid(senderTab) {
+    // for debugging it might be useful to measure time
+    getUserUuid(senderTab).then((uuid) => (uuidCache = uuid));
+}
+
 browser.runtime.onMessage.addListener((message, sender) => {
     try {
         if (message.type === "GAME_LINK_CLICKED" || message.type === "GAME_PAGE_CLICKED") {
+            logMessage("Opening game on Lichess...");
             measureTime("Time total", async () =>
                 openOnLichess(message.chesscomGameUrl, sender.tab).catch((e) =>
                     handleError(openOnLichess.name + " failed", e)
                 )
             );
+        } else if (message.type === "UUID_REQUEST") {
+            fetchAndStoreUuid(sender.tab);
         } else if (message.type === "ERROR") {
             handleError(message.context, message.error);
         } else if (!message.type) {
@@ -44,9 +54,10 @@ async function openOnLichess(chesscomGameUrl, senderTab) {
     const newTab = true;
     const activeTab = true;
 
-    const uuidPromise = measureTime("User uuid download", () => getUserUuid(senderTab)); // start fetching uuid before actually needed to improve performance
+    // start fetching uuid, hopefully uuid cache holds the new value by the time we use it
+    fetchAndStoreUuid(senderTab);
 
-    const data = await measureTime("Chess.com download", async () => getGameData(chesscomGameUrl));
+    const data = await measureTime("Chess.com download", () => getGameData(chesscomGameUrl));
     if (!data) return;
 
     const gameData = data.game;
@@ -54,10 +65,10 @@ async function openOnLichess(chesscomGameUrl, senderTab) {
 
     const pgn = gameDataToPgn(gameData);
 
-    let importUrl = await measureTime("Lichess upload", async () => importGame(pgn));
+    let importUrl = await measureTime("Lichess upload", () => importGame(pgn));
     if (!importUrl) return;
 
-    const flipBoard = await shouldFlipBoard(playersData, senderTab.url, uuidPromise);
+    const flipBoard = await shouldFlipBoard(playersData, senderTab.url, uuidCache);
     const orientationSuffix = flipBoard ? "/black" : "/white";
 
     const options = { newTab, activeTab, senderTab };

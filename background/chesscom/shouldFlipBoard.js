@@ -13,7 +13,7 @@ async function getUserName(playersData, userUuid) {
 /* 
 Decide if we want to view the board from white or black's perspective
  */
-async function decideViewedPlayer(playersData, senderUrl, uuidPromise) {
+async function decideViewedPlayer(playersData, senderUrl, userUuid) {
     const userPerspectiveUrls = [
         "https://www.chess.com/home",
         "https://www.chess.com/game/",
@@ -29,16 +29,6 @@ async function decideViewedPlayer(playersData, senderUrl, uuidPromise) {
     let viewedPlayer;
 
     if (isUserUrl) {
-        const sentinel = Symbol("pending");
-        const result = await Promise.race([uuidPromise, sentinel]); // chess.com's servers sometimes respond slow, we don't wait
-        let userUuid;
-        if (result === sentinel) {
-            userUuid = null;
-            handleError("Fetching user uuid took too long");
-        } else {
-            userUuid = result;
-        }
-
         viewedPlayer = getUserName(playersData, userUuid);
     } else if (isMemberUrl) {
         viewedPlayer = senderUrl.slice(memberUrl.length).split(/[\/?#]/)[0];
@@ -51,8 +41,8 @@ async function decideViewedPlayer(playersData, senderUrl, uuidPromise) {
     return viewedPlayer;
 }
 
-export default async function shouldFlipBoard(playersData, senderUrl, uuidPromise) {
-    let viewedPlayer = await decideViewedPlayer(playersData, senderUrl, uuidPromise);
+export default async function shouldFlipBoard(playersData, senderUrl, userUuid) {
+    let viewedPlayer = await decideViewedPlayer(playersData, senderUrl, userUuid);
     if (!viewedPlayer) return false;
     viewedPlayer = viewedPlayer.toLowerCase();
 
