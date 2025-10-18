@@ -2,7 +2,7 @@ import executeScriptInTab from "../executeScriptInTab.js";
 
 function turnOnCevalToggle() {
     const cevalToggle = document.querySelector("#analyse-toggle-ceval");
-    if (cevalToggle) {
+    if (cevalToggle && !cevalToggle.checked) {
         cevalToggle.click(); // .checked = true doesn't open lines, not having the tab active still has that effect
     } else {
         browser.runtime.sendMessage({

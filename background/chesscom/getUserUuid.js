@@ -26,11 +26,15 @@ async function requestUuid() {
 }
 
 export default async function getUserUuid(senderTab) {
-    let userUuid = new Promise((resolve) => {
+    let userUuid = new Promise((resolve, reject) => {
         browser.runtime.onMessage.addListener(function listener(message) {
             if (message.type === "UUID") {
                 browser.runtime.onMessage.removeListener(listener);
-                resolve(message.uuid);
+                if (message.uuid) {
+                    resolve(message.uuid);
+                } else {
+                    reject();
+                }
             }
         });
     });
