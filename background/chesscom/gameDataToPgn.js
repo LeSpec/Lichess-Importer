@@ -1,5 +1,6 @@
-import { Chess } from "../../lib/chess.js-0.13.4/chess.js";
+import { KING, Chess } from "../../lib/chess.js-0.13.4/chess.js";
 import decodeTcn from "./decodeTcn.js";
+import { handleError } from "../../lib/utility.js";
 
 export default function gameDataToPgn(gameData) {
     const chess = new Chess();
@@ -16,7 +17,32 @@ export default function gameDataToPgn(gameData) {
     // add chess moves
     const tcn = gameData.moveList;
     const moveObjects = decodeTcn(tcn);
-    moveObjects.forEach((o) => chess.move(o));
+
+    for (const moveObj of moveObjects) {
+        if (!makeMove(chess, moveObj)) {
+            handleError("Illegal move: " + JSON.stringify(moveObj) + "\nhistory: " + chess.history());
+            break;
+        }
+    }
 
     return chess.pgn();
+}
+
+function makeMove(chess, moveObj) {
+    if (!chess.move(moveObj)) {
+        const fixedMove = fixMove(chess, moveObj);
+        if (!fixedMove) return false;
+
+        if (!chess.move(fixedMove)) return false;
+    }
+
+    return true;
+}
+
+function fixMove(chess, moveObj) {
+    if (chess.get(moveObj.from).type === KING && moveObj.to && moveObj.from[1] === moveObj.to[1]) {
+        if (moveObj.from < moveObj.to) return "O-O";
+        if (moveObj.from > moveObj.to) return "O-O-O";
+    }
+    return null;
 }
