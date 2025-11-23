@@ -1,30 +1,33 @@
 {
     "manifest_version": 3,
     "name": "Lichess Importer",
-    "version": "1.0.11",
-    "description": "Import games from chess.com",
+    "version": "1.1.0",
+    "description": "Analyse Chess.com games on Lichess",
     "author": "LeSpec",
     "homepage_url": "https://github.com/LeSpec/Lichess-Importer",
-    "permissions": ["scripting"],
+    "permissions": ["scripting", "storage"],
     "host_permissions": ["https://lichess.org/*"],
     "icons": {
-        "16": "icons/icon-16.png",
-        "32": "icons/icon-32.png",
-        "48": "icons/icon-48.png",
-        "96": "icons/icon-96.png",
-        "128": "icons/icon-128.png"
+        "16": "src/icons/icon-16.png",
+        "32": "src/icons/icon-32.png",
+        "48": "src/icons/icon-48.png",
+        "96": "src/icons/icon-96.png",
+        "128": "src/icons/icon-128.png"
     },
     "background": {
-        "scripts": ["background/background.js"],
+        "scripts": ["src/background/background.js"],
         "type": "module"
+    },
+    "action": {
+        "default_popup": "src/popup/popup.html"
     },
     "content_scripts": [
         {
             "matches": ["https://www.chess.com/*"],
             "js": [
-                "content_scripts/anchorClickListener.js",
-                "content_scripts/pageClickListener.js",
-                "content_scripts/uuidRequester.js"
+                "src/content_scripts/anchorClickListener.js",
+                "src/content_scripts/pageClickListener.js",
+                "src/content_scripts/uuidRequester.js"
             ],
             "run_at": "document_end"
         }
@@ -34,7 +37,8 @@
             "id": "{23b7cff7-adc1-400d-a216-4b84e2257545}",
             "strict_min_version": "112.0",
             "data_collection_permissions": {
-                "required": ["none"]
+                "required": ["none"],
+                "optional": ["technicalAndInteraction"]
             }
         }
     }

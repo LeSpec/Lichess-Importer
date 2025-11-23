@@ -1,13 +1,14 @@
-import { handleError } from "../../lib/utility.js";
+import { DetailedError } from "../utility.js";
 
-function transformToCallbackUrl(chesscomUrl) {
-    const trimmedUrl = chesscomUrl.trim();
+function transformToCallbackUrl(chesscomGameUrl) {
+    const trimmedUrl = chesscomGameUrl.trim();
     const regex = /^https:\/\/www\.chess\.com\/(analysis\/)?game\/((live|daily)\/)?(\d+)(.*)?$/;
 
     const match = trimmedUrl.match(regex);
     if (!match) {
-        handleError(`Could not transform ${chesscomUrl} to callback url`);
-        return null;
+        throw new DetailedError(`Could not transform Chess.com game url to callback url`, {
+            chesscomGameUrl,
+        });
     }
 
     const [, analysis, , type, gameId] = match;
@@ -16,11 +17,10 @@ function transformToCallbackUrl(chesscomUrl) {
 
 export default async function getGameData(chesscomUrl) {
     const callbackUrl = transformToCallbackUrl(chesscomUrl);
-    if (!callbackUrl) return null;
 
     try {
         const response = await fetch(callbackUrl);
-        if (!response.ok) throw "status " + response.status;
+        if (!response.ok) throw new Error("status " + response.status);
 
         let text = await response.text();
         text = text.replace(/\\\\'/g, "'"); // Fix problem with {"Event": "Let\\'s play!"}
@@ -28,7 +28,6 @@ export default async function getGameData(chesscomUrl) {
 
         return data;
     } catch (e) {
-        handleError("Failed to get game data for " + callbackUrl, e);
-        return null;
+        throw new DetailedError("Failed to get game data for callback url", { callbackUrl }, { cause: e });
     }
 }

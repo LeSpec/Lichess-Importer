@@ -20,11 +20,7 @@ function redirectClicks(event) {
 
 const columnOne = document.querySelector(".layout-column-one");
 if (columnOne) {
-    columnOne
-        .addEventListener("click", redirectClicks)
-        .catch(
-            browser.runtime.sendMessage({ type: "ERROR", context: "Anchor click listener failed", error: e })
-        );
+    columnOne.addEventListener("click", redirectClicks);
 } else {
     documentUrl = document.location.href;
     if (
@@ -32,9 +28,12 @@ if (columnOne) {
         documentUrl.startsWith("https://www.chess.com/games/archive/") ||
         documentUrl.startsWith("https://www.chess.com/member/")
     ) {
+        const e = new Error("No element with class layout-column-one");
         browser.runtime.sendMessage({
             type: "ERROR",
-            context: "No element with class layout-column-one",
+            name: e.name,
+            message: e.message,
+            stack: e.stack,
         });
     }
 }

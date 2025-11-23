@@ -1,25 +1,30 @@
 name: Zip on manifest.json change
 
 on:
-  push:
-    paths:
-      - "manifest.json"
-  workflow_dispatch:
+    push:
+        paths:
+            - "manifest.json"
+    workflow_dispatch:
 
 jobs:
-  zip:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+    zip:
+        runs-on: macos-latest
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
 
-      - name: Create zip archive
-        run: |
-          mkdir temp_folder
-          rsync -a --exclude="README.md" ./* temp_folder/
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-           name: lichess-importer
-           path: temp_folder
+            - name: Create zip archive
+              run: |
+                  mkdir temp_folder
+                  rsync -a \
+                    --exclude="README.md" \
+                    --exclude="build.js" \
+                    --exclude="package.json" \
+                    --exclude="package-lock.json" \
+                    ./* temp_folder/
 
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: lichess-importer
+                  path: temp_folder

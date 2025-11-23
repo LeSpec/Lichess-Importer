@@ -1,5 +1,3 @@
-import { handleError } from "../../lib/utility.js";
-
 /*
 Lichess.org API reference: https://lichess.org/api#tag/Games/operation/gameImport
  */
@@ -12,12 +10,11 @@ export default async function importGame(pgn) {
         });
         const responseJson = await response.json();
 
-        if (!response.ok) throw `status ${response.status} ${responseJson.error}`;
+        if (!response.ok) throw new Error(`status ${response.status} ${responseJson.error}`);
 
         const importedGameUrl = responseJson.url;
         return importedGameUrl;
     } catch (e) {
-        handleError("Lichess import failed", e);
-        return null;
+        throw new Error("Lichess import failed", { cause: e });
     }
 }

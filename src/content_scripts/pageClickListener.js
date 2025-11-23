@@ -15,10 +15,4 @@ function redirectClicks(event) {
     }
 }
 
-document.body.addEventListener("click", redirectClicks).catch(
-    browser.runtime.sendMessage({
-        type: "ERROR",
-        context: "Page click listener failed",
-        error: e,
-    })
-);
+document.body.addEventListener("click", redirectClicks);

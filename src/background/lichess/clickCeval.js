@@ -2,13 +2,17 @@ import executeScriptInTab from "../executeScriptInTab.js";
 
 function turnOnCevalToggle() {
     const cevalToggle = document.querySelector("#analyse-toggle-ceval");
-    if (cevalToggle && !cevalToggle.checked) {
-        cevalToggle.click(); // .checked = true doesn't open lines, not having the tab active still has that effect
+    if (cevalToggle) {
+        if (!cevalToggle.checked) {
+            cevalToggle.click(); // .checked = true doesn't open lines, not having the tab active still has that effect
+        }
     } else {
+        const e = new Error("Could not find ceval toggle");
         browser.runtime.sendMessage({
             type: "ERROR",
-            context: "Could not find ceval toggle",
-            error: e,
+            name: e.name,
+            message: e.message,
+            stack: e.stack,
         });
     }
 }
@@ -29,10 +33,12 @@ function executeWhenTabIsActive(tabId, callback) {
 }
 
 export default function clickCeval(gameTabId) {
-    browser.tabs.onUpdated.addListener(async function listener(tabId, changeInfo, tab) {
-        if (tabId === gameTabId && tab.status === "complete") {
-            browser.tabs.onUpdated.removeListener(listener);
-            executeWhenTabIsActive(tabId, turnOnCevalToggle);
-        }
-    });
+    browser.tabs.onUpdated.addListener(
+        async function listener(tabId, changeInfo, tab) {
+            if (tabId === gameTabId && tab.status === "complete") {
+                browser.tabs.onUpdated.removeListener(listener);
+                executeWhenTabIsActive(tabId, turnOnCevalToggle);
+            }
+        },
+    );
 }

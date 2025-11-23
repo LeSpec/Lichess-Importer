@@ -8,12 +8,16 @@ async function requestUuid() {
                 "/GetPropertiesForAuthenticatedUser",
             {
                 method: "POST",
-                headers: { "Content-Type": "application/json", credentials: "include", mode: "cors" },
+                mode: "cors",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: "{}",
-            }
+            },
         );
 
-        if (!response.ok) throw "status " + response.status;
+        if (!response.ok) throw new Error("status " + response.status);
 
         const responseJson = await response.json();
         const uuid = responseJson.userProperties.user;
@@ -21,7 +25,12 @@ async function requestUuid() {
         browser.runtime.sendMessage({ type: "UUID", uuid: uuid });
     } catch (e) {
         browser.runtime.sendMessage({ type: "UUID", uuid: null });
-        browser.runtime.sendMessage({ type: "ERROR", context: "Could not get user uuid", error: e });
+        browser.runtime.sendMessage({
+            type: "ERROR",
+            name: e.name,
+            message: "Could not get user uuid, cause: " + e.message,
+            stack: e.stack,
+        });
     }
 }
 

@@ -1,4 +1,4 @@
-import { handleError } from "../lib/utility.js";
+import { handleError } from "./utility.js";
 
 export default function executeScriptInTab(tabId, func, args) {
     try {
@@ -9,6 +9,6 @@ export default function executeScriptInTab(tabId, func, args) {
             injectImmediately: true,
         });
     } catch (e) {
-        handleError("Failed to execute script " + func.name, e);
+        throw new Error("Failed to execute script " + func.name, { cause: e });
     }
 }
