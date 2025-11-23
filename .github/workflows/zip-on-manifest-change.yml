@@ -17,7 +17,7 @@ jobs:
               run: |
                   mkdir temp_folder
                   rsync -a manifest.json temp_folder/
-                  rsync -a src/ temp_folder/
+                  rsync -a src temp_folder/
 
             - name: Upload artifact
               uses: actions/upload-artifact@v4
