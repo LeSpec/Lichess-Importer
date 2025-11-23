@@ -3,7 +3,6 @@
     "devDependencies": {
         "concurrently": "^9.2.1",
         "esbuild": "0.14.54",
-        "jsdom": "^27.2.0",
         "prettier": "^3.6.2",
         "prettier-plugin-tailwindcss": "^0.7.1"
     },
