@@ -159,14 +159,19 @@ async function loadGame(importUrl, senderTab) {
 }
 
 function waitForTab(waitTabId) {
-    return new Promise((resolve) =>
-        browser.tabs.onUpdated.addListener(
-            function listener(tabId, changeInfo, tab) {
-                if (tabId === waitTabId && tab.status === "complete") {
-                    browser.tabs.onUpdated.removeListener(listener);
-                    resolve();
-                }
-            },
-        ),
-    );
+    return new Promise((resolve) => {
+        const filter = {
+            properties: ["status"],
+            tabId: waitTabId,
+        };
+
+        function listener(tabId, changeInfo, tab) {
+            if (changeInfo.status === "complete") {
+                browser.tabs.onUpdated.removeListener(listener);
+                resolve();
+            }
+        }
+
+        browser.tabs.onUpdated.addListener(listener, filter);
+    });
 }

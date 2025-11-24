@@ -1,4 +1,5 @@
 import executeScriptInTab from "../executeScriptInTab.js";
+import runAfterLichessComplete from "../runAfterLichessComplete.js";
 
 function turnOnCevalToggle() {
     const cevalToggle = document.querySelector("#analyse-toggle-ceval");
@@ -33,12 +34,6 @@ function executeWhenTabIsActive(tabId, callback) {
 }
 
 export default function clickCeval(gameTabId) {
-    browser.tabs.onUpdated.addListener(
-        async function listener(tabId, changeInfo, tab) {
-            if (tabId === gameTabId && tab.status === "complete") {
-                browser.tabs.onUpdated.removeListener(listener);
-                executeWhenTabIsActive(tabId, turnOnCevalToggle);
-            }
-        },
-    );
+    const func = () => executeWhenTabIsActive(gameTabId, turnOnCevalToggle);
+    runAfterLichessComplete(gameTabId, func);
 }

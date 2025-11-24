@@ -1,4 +1,4 @@
-import { handleError, DetailedError } from "../utility.js";
+import { DetailedError } from "../utility.js";
 
 export default function shouldFlipBoard(playersData, senderUrl, userUuid) {
     const homeUrl = "https://www.chess.com/home";

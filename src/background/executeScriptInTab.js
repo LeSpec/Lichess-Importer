@@ -1,5 +1,3 @@
-import { handleError } from "./utility.js";
-
 export default function executeScriptInTab(tabId, func, args) {
     try {
         browser.scripting.executeScript({

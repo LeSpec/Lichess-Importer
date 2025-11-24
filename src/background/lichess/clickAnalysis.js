@@ -1,4 +1,5 @@
 import executeScriptInTab from "../executeScriptInTab.js";
+import runAfterLichessComplete from "../runAfterLichessComplete.js";
 
 async function clickScript() {
     try {
@@ -26,12 +27,6 @@ async function clickScript() {
 }
 
 export default function clickAnalysis(gameTabId) {
-    browser.tabs.onUpdated.addListener(
-        function listener(tabId, changeInfo, tab) {
-            if (tabId === gameTabId && tab.status === "complete") {
-                browser.tabs.onUpdated.removeListener(listener);
-                executeScriptInTab(tabId, clickScript);
-            }
-        },
-    );
+    const func = () => executeScriptInTab(gameTabId, clickScript);
+    runAfterLichessComplete(gameTabId, func);
 }
